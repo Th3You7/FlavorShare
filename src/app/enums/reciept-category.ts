@@ -1,0 +1,16 @@
+export enum RecieptCategory {
+  BREAKFAST = 'Breakfast',
+  LUNCH = 'Lunch',
+  DINNER = 'Dinner',
+  APPETIZER = 'Appetizer',
+  SALAD = 'Salad',
+  MAIN_COURSE = 'Main Course',
+  SIDE_DISH = 'Side Dish',
+  BAKED_GOODS = 'Baked Goods',
+  DESSERT = 'Dessert',
+  SNACK = 'Snack',
+  SOUP = 'Soup',
+  HOLIDAY = 'Holiday',
+  VEGETARIAN = 'Vegetarian',
+  COOKBOOK_REVIEW = 'Cookbook Review',
+}
