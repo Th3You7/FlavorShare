@@ -49,4 +49,8 @@ export class AuthService implements OnInit {
   ngOnInit(): void {
     this.isAuthenticated = localStorage.getItem('user') ? true : false;
   }
+
+  getIsAuthenticated(): boolean {
+    return this.isAuthenticated;
+  }
 }
