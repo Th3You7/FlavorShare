@@ -6,6 +6,7 @@ import { ListReceiptComponent } from './components/dashboard/list-receipt/list-r
 import { AddReceiptComponent } from './components/dashboard/add-receipt/add-receipt.component';
 import { EditReceiptComponent } from './components/dashboard/edit-receipt/edit-receipt.component';
 import { AuthComponent } from './components/auth/auth.component';
+import { authGuard } from './guard/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -27,6 +28,7 @@ export const routes: Routes = [
       { path: 'add-receipt', component: AddReceiptComponent },
       { path: 'edit-receipt', component: EditReceiptComponent },
     ],
+    canActivate: [authGuard],
   },
   { path: 'receipt/:receiptId', component: ReceiptComponent },
   { path: '**', redirectTo: '' },
