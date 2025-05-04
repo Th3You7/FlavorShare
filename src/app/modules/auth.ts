@@ -8,3 +8,15 @@ export interface AuthRegister {
   password: string;
   name: string;
 }
+
+export interface AuthResponse {
+  userId: string;
+  name: string;
+  email: string;
+}
+
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  name: string;
+}
