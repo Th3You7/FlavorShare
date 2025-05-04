@@ -1,1 +1,394 @@
-<p>dashboard works!</p>
+<app-navbar></app-navbar>
+<div class="min-h-screen bg-gray-50">
+  <!-- Header Section -->
+  <div class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-12">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-4">Recipe Dashboard</h1>
+      <p class="text-lg opacity-90">
+        Manage and organize your culinary creations
+      </p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container mx-auto px-4 py-8">
+    <!-- Stats Section -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-500">Total Recipes</p>
+            <h3 class="text-2xl font-bold text-gray-800">
+              {{ recipes.length }}
+            </h3>
+          </div>
+          <div class="bg-purple-100 p-3 rounded-lg">
+            <svg
+              class="w-6 h-6 text-purple-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-500">Featured Recipes</p>
+            <h3 class="text-2xl font-bold text-gray-800">
+              {{ featuredRecipesCount }}
+            </h3>
+          </div>
+          <div class="bg-green-100 p-3 rounded-lg">
+            <svg
+              class="w-6 h-6 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-500">Categories</p>
+            <h3 class="text-2xl font-bold text-gray-800">
+              {{ uniqueCategoriesCount }}
+            </h3>
+          </div>
+          <div class="bg-blue-100 p-3 rounded-lg">
+            <svg
+              class="w-6 h-6 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create/Edit Form -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">
+          {{ editingRecipe ? "Edit Recipe" : "Create New Recipe" }}
+        </h2>
+        <button
+          *ngIf="!showCreateForm && !editingRecipe"
+          (click)="showCreateForm = true"
+          class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            ></path>
+          </svg>
+          New Recipe
+        </button>
+      </div>
+
+      <form
+        *ngIf="showCreateForm || editingRecipe"
+        (ngSubmit)="handleSubmit()"
+        class="space-y-6"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Title</label
+            >
+            <input
+              type="text"
+              [(ngModel)]="formData.title"
+              name="title"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+              required
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Category</label
+            >
+            <select
+              [(ngModel)]="formData.category"
+              name="category"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+              required
+            >
+              <option *ngFor="let category of categories" [value]="category">
+                {{ category }}
+              </option>
+            </select>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Description</label
+            >
+            <textarea
+              [(ngModel)]="formData.description"
+              name="description"
+              rows="3"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+              required
+            ></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Cook Time (minutes)</label
+            >
+            <input
+              type="number"
+              [(ngModel)]="formData.cookTime"
+              name="cookTime"
+              min="1"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+              required
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Difficulty</label
+            >
+            <select
+              [(ngModel)]="formData.difficulty"
+              name="difficulty"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+              required
+            >
+              <option
+                *ngFor="let difficulty of difficulties"
+                [value]="difficulty"
+              >
+                {{ difficulty }}
+              </option>
+            </select>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Image URL</label
+            >
+            <input
+              type="url"
+              [(ngModel)]="formData.image"
+              name="image"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+              required
+            />
+          </div>
+
+          <!-- Ingredients Section -->
+          <div class="md:col-span-2">
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-sm font-medium text-gray-700"
+                >Ingredients</label
+              >
+              <button
+                type="button"
+                (click)="addIngredient()"
+                class="text-sm text-purple-600 hover:text-purple-700 flex items-center gap-1"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                Add Ingredient
+              </button>
+            </div>
+            <div class="space-y-2">
+              <div
+                *ngFor="let ingredient of formData.ingredients; let i = index"
+                class="flex gap-2"
+              >
+                <input
+                  type="text"
+                  [(ngModel)]="formData.ingredients![i]"
+                  [name]="'ingredient-' + i"
+                  class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                  required
+                />
+                <button
+                  type="button"
+                  (click)="removeIngredient(i)"
+                  class="p-2 text-red-600 hover:text-red-700"
+                  [disabled]="formData.ingredients!.length === 1"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Instructions Section -->
+          <div class="md:col-span-2">
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-sm font-medium text-gray-700"
+                >Instructions</label
+              >
+              <button
+                type="button"
+                (click)="addInstruction()"
+                class="text-sm text-purple-600 hover:text-purple-700 flex items-center gap-1"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                Add Step
+              </button>
+            </div>
+            <div class="space-y-2">
+              <div
+                *ngFor="let instruction of formData.instructions; let i = index"
+                class="flex gap-2"
+              >
+                <div class="flex-1 flex gap-2">
+                  <span
+                    class="flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 text-purple-700 font-medium"
+                  >
+                    {{ i + 1 }}
+                  </span>
+                  <textarea
+                    [(ngModel)]="formData.instructions![i]"
+                    [name]="'instruction-' + i"
+                    rows="2"
+                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                    required
+                  ></textarea>
+                </div>
+                <button
+                  type="button"
+                  (click)="removeInstruction(i)"
+                  class="p-2 text-red-600 hover:text-red-700"
+                  [disabled]="formData.instructions!.length === 1"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="md:col-span-2 flex items-center gap-4">
+            <label class="flex items-center gap-2">
+              <input
+                type="checkbox"
+                [(ngModel)]="formData.featured"
+                name="featured"
+                class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-600"
+              />
+              <span class="text-sm font-medium text-gray-700"
+                >Featured Recipe</span
+              >
+            </label>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-4">
+          <button
+            type="button"
+            (click)="cancelForm()"
+            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+          >
+            {{ editingRecipe ? "Update Recipe" : "Create Recipe" }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Recipes Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <app-dashboard-recipe-card
+        *ngFor="let recipe of recipes"
+        [recipe]="recipe"
+        (edit)="startEdit(recipe)"
+        (delete)="deleteRecipe(recipe._id)"
+      ></app-dashboard-recipe-card>
+    </div>
+  </div>
+</div>
