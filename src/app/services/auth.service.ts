@@ -1,11 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, OnInit } from '@angular/core';
 import { Receipt } from '../modules/receipt';
-import { AuthLogin, AuthRegister } from '../modules/auth';
+import {
+  AuthLogin,
+  AuthRegister,
+  AuthResponse,
+  RegisterRequest,
+} from '../modules/auth';
 import { ReceiptComponent } from '../components/receipt/receipt.component';
 import { User } from '../modules/user';
 import { Router } from '@angular/router';
-import { switchMap } from 'rxjs';
+import { catchError, map, Observable, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -16,28 +21,45 @@ export class AuthService implements OnInit {
   private router = inject(Router);
   private isAuthenticated: boolean = false;
 
-  login(auth: AuthLogin): void {
-    this.http.get<User[]>(this.url).subscribe((users: User[]) => {
-      const user = users.find((user: User) => user.email === auth.email);
+  login(auth: AuthLogin): Observable<AuthResponse> {
+    return this.http.get<User[]>(this.url).pipe(
+      map((users: User[]) => {
+        const user = users.find((user: User) => user.email === auth.email);
+        if (user && user.password === auth.password) {
+          const response: AuthResponse = {
+            userId: user.id,
+            name: user.name,
+            email: user.email,
+          };
+          localStorage.setItem('user', JSON.stringify(response));
+          this.isAuthenticated = true;
+          this.router.navigate(['/dashboard']);
 
-      if (user && user.password === auth.password) {
-        localStorage.setItem(
-          'user',
-          JSON.stringify({ email: user.email, name: user.name })
-        );
-        this.isAuthenticated = true;
-        this.router.navigate(['/dashboard']);
-      }
-    });
+          return response;
+        }
+        throw new Error('Invalid email or password');
+      }),
+      catchError((error) => {
+        throw new Error('Invalid email or password');
+      })
+    );
   }
 
-  register(auth: AuthRegister): void {
-    this.http.get<User[]>(this.url).pipe(
+  register(user: RegisterRequest): Observable<AuthResponse> {
+    return this.http.get<User[]>(`${this.url}/users?email=${user.email}`).pipe(
       switchMap((users) => {
         if (users.length > 0) {
           throw new Error('Email already exists');
         }
-        return this.http.post<User>(`${this.url}/users`, auth);
+        return this.http.post<User>(`${this.url}/users`, user);
+      }),
+      map((user) => ({
+        userId: user.id,
+        email: user.email,
+        name: user.name,
+      })),
+      catchError((error) => {
+        throw new Error('Email already exists');
       })
     );
   }
@@ -52,5 +74,10 @@ export class AuthService implements OnInit {
 
   getIsAuthenticated(): boolean {
     return this.isAuthenticated;
+  }
+
+  getUserId(): string {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    return user.userId;
   }
 }

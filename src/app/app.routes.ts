@@ -7,15 +7,18 @@ import { AddReceiptComponent } from './components/dashboard/add-receipt/add-rece
 import { EditReceiptComponent } from './components/dashboard/edit-receipt/edit-receipt.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { authGuard } from './guard/auth.guard';
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   {
-    path: 'auth',
-    children: [
-      { path: 'login', component: AuthComponent },
-      { path: 'signup', component: AuthComponent },
-    ],
+    path: 'register',
+    component: RegisterComponent,
+  },
+  {
+    path: 'login',
+    component: LoginComponent,
   },
   {
     path: 'dashboard',
