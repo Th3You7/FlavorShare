@@ -9,8 +9,8 @@ import { ReceiptService } from '../../services/receipt.service';
   styleUrl: './receipt.component.css',
 })
 export class ReceiptComponent implements OnInit {
-  private _receiptId: string;
-  private receipt: Receipt;
+  private _receiptId: string = '';
+  private receipt: Receipt = {} as Receipt;
   private receiptService = inject(ReceiptService);
 
   @Input()

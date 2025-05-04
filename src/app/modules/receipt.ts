@@ -1,3 +1,5 @@
+import { RecieptCategory } from '../enums/reciept-category';
+
 export interface Receipt {
   _id: string;
   userId: string;
@@ -8,4 +10,9 @@ export interface Receipt {
   instructions: string[];
   createdAt: Date;
   updatedAt: Date;
+  featured: boolean;
+  category: RecieptCategory;
+  rating: number;
+  cookTime: number;
+  difficulty: string;
 }

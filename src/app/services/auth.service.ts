@@ -14,7 +14,7 @@ export class AuthService implements OnInit {
   private url = 'http://localhost:3000/users';
   private http = inject(HttpClient);
   private router = inject(Router);
-  private isAuthenticated: boolean;
+  private isAuthenticated: boolean = false;
 
   login(auth: AuthLogin): void {
     this.http.get<User[]>(this.url).subscribe((users: User[]) => {
